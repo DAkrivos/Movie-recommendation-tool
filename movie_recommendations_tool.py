@@ -10,7 +10,7 @@ def recommend_next_movie(description):
   # Read contents of movie list file
   with open("movies.txt", "r") as movies:
     # Split each movie entry into title and description
-    movie_list = [line.strip().split(':') for line in movies]
+    movie_list = [line.strip().split('<=>') for line in movies]
 
   # Get the number of movies in the list
   num_movies = len(movie_list)
