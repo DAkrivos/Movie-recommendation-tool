@@ -1,44 +1,25 @@
-# Import the spaCy library for NLP
-import spacy
+# Function to recommend movies based on a target genre
+def recommend_movie_by_genre(target_genre):
+    movie_list = []
+    with open("movies.txt", "r") as movies:
+        # Split each line into title, genres, and description
+        movie_list = [line.strip().split('<=>') for line in movies if line.strip()]
+    
+    # Initialise a list to hold titles of movies that match the target genre
+    genre_matched_movies = []
 
-# Load en_core_web_md
-nlp = spacy.load('en_core_web_md')
+    # Check each movie to see if the target genre is in its genre list
+    for title, genres, _ in movie_list:
+        if target_genre.lower() in genres.lower().split(','):
+            genre_matched_movies.append(title)
+    
+    # Return the list of movies that match the genre
+    return genre_matched_movies
 
-# Create function which takes in movie description as a parameter and returns title of most similar movie.
-def recommend_next_movie(description):
+# Example: looking for Action movies
+target_genre = "Action"
+recommended_movies = recommend_movie_by_genre(target_genre)
+print(f"If you like {target_genre} movies, you might also like:")
+for movie in recommended_movies:
+    print(movie)
 
-  # Read contents of movie list file
-  with open("movies.txt", "r") as movies:
-    # Split each movie entry into title and description
-    movie_list = [line.strip().split('<=>') for line in movies]
-
-  # Get the number of movies in the list
-  num_movies = len(movie_list)
-
-  # Create a list to store similarity scores
-  similarity_scores = []
-
-  # Represent the description as a spaCy document
-  model_sentence = nlp(description)
-
-  # Iterate through each movie in the list
-  for i in range(num_movies):
-    # Represent the movie description as a spaCy document
-    movie_description = nlp(movie_list[i][1])
-
-    # Calculate the similarity score between the descriptions
-    similarity_scores.append(model_sentence.similarity(movie_description))
-
-  # Find the index of the movie with the highest similarity score
-  most_similar_index = similarity_scores.index(max(similarity_scores))
-
-  # Return the title of the most similar movie
-  return movie_list[most_similar_index][0]
-
-# Movie description to compare with
-planet_hulk_description = """Will he save their world or destroy it? 
-When the Hulk becomes too dangerous for the Earth, the Illuminati trick Hulk into a shuttle and launch him into space to a planet where the Hulk can live in peace. 
-Unfortunately, Hulk lands on the planet Sakaar where he is sold into slavery and trained as a gladiator."""
-
-# Call function to recommend next similar movie and print movie title
-print("If you liked this movie, you might also like:", recommend_next_movie(planet_hulk_description))
